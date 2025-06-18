@@ -12,26 +12,26 @@ namespace gui {
             void handleEvent(const SDL_Event& event, int offsetX = 0, int offsetY = 0) override;
 
             void setText(const std::string& text);
-            const std::string& getText() const { return text; };
+            const std::string& getText() const { return m_text; };
 
-            void setFocused(bool focused) { focused = focused; }
-            bool isFocused() const { return focused; }
+            void setFocused(bool focused) { m_focused = focused; }
+            bool isFocused() const { return m_focused; }
 
         private:
-            std::string text;
-            TTF_Font* font;
-            SDL_Color textColour = { 0, 0, 0, 255 };
-            SDL_Color boxColour = { 255, 255, 255, 255 };
-            SDL_Color borderColour = { 0, 0, 0, 255 };
+            std::string m_text;
+            TTF_Font* m_font;
+            SDL_Color m_textColour = { 0, 0, 0, 255 };
+            SDL_Color m_boxColour = { 255, 255, 255, 255 };
+            SDL_Color m_borderColour = { 0, 0, 0, 255 };
 
-            SDL_Texture* texture = nullptr;
+            SDL_Texture* m_texture = nullptr;
             void updateTexture(SDL_Renderer* renderer);
 
-            size_t cursorPosition = 0;
-            bool focused = false;
-            Uint32 lastCursorToggle = 0;
-            bool showCursor = true;
+            size_t m_cursorPosition = 0;
+            bool m_focused = false;
+            Uint32 m_lastCursorToggle = 0;
+            bool m_showCursor = true;
 
-            int scrollOffsetX = 0;
+            int m_scrollOffsetX = 0;
     };
 }

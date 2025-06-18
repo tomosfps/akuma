@@ -1,0 +1,1 @@
+Placeholder images, you can change them yourself

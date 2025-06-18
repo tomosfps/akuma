@@ -6,19 +6,19 @@ namespace gui {
         : Widget(x, y, width, height, id), label(label) {}
 
     void Button::setFont(TTF_Font* newFont, SDL_Renderer* renderer) {
-        font = newFont;
+        m_font = newFont;
 
-        if (labelTexture) {
-            SDL_DestroyTexture(labelTexture);
-            labelTexture = nullptr;
+        if (m_labelTexture) {
+            SDL_DestroyTexture(m_labelTexture);
+            m_labelTexture = nullptr;
         }
 
-        if (font && !label.empty()) {
-            SDL_Surface* surface = TTF_RenderText_Blended(font, label.c_str(), textColour);
+        if (m_font && !label.empty()) {
+            SDL_Surface* surface = TTF_RenderText_Blended(m_font, label.c_str(), m_textColour);
             if (surface) {
-                labelTexture = SDL_CreateTextureFromSurface(renderer, surface);
-                labelWidth = surface->w;
-                labelHeight = surface->h;
+                m_labelTexture = SDL_CreateTextureFromSurface(renderer, surface);
+                m_labelWidth = surface->w;
+                m_labelHeight = surface->h;
                 SDL_FreeSurface(surface);
             } else {
                 SDL_Log("Failed to create label texture: %s", TTF_GetError());
@@ -27,63 +27,63 @@ namespace gui {
     }
 
     void Button::render(SDL_Renderer* renderer, int offsetX, int offsetY) {
-        SDL_Rect rect = { offsetX + x, offsetY + y, width, height };
+        SDL_Rect rect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
     
-        if (texture) {
-            SDL_RenderCopy(renderer, texture, nullptr, &rect);
+        if (m_texture) {
+            SDL_RenderCopy(renderer, m_texture, nullptr, &rect);
         } else {
-            SDL_Color color = isClicked ? pressedColour : (isHovered ? hoverColour : defaultColour);
+            SDL_Color color = m_isClicked ? m_pressedColour : (m_isHovered ? m_hoverColour : m_defaultColour);
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
             SDL_RenderFillRect(renderer, &rect);
         }
 
-        if (labelTexture) {
+        if (m_labelTexture) {
             SDL_Rect textRect = {
-                rect.x + (rect.w - labelWidth) / 2,
-                rect.y + (rect.h - labelHeight) / 2,
-                labelWidth, labelHeight
+                rect.x + (rect.w - m_labelWidth) / 2,
+                rect.y + (rect.h - m_labelHeight) / 2,
+                m_labelWidth, m_labelHeight
             };
-            SDL_RenderCopy(renderer, labelTexture, nullptr, &textRect);
+            SDL_RenderCopy(renderer, m_labelTexture, nullptr, &textRect);
         }
 
         Widget::render(renderer, offsetX, offsetY);
     }
 
     void Button::handleEvent(const SDL_Event& event, int offsetX, int offsetY) {
-        SDL_Rect rect = { offsetX + x, offsetY + y, width, height };
+        SDL_Rect rect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
         SDL_Point mousePoint;
 
         if ((event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) && event.button.button == SDL_BUTTON_LEFT) {
             mousePoint = { event.button.x - offsetX, event.button.y - offsetY };
             bool inside = SDL_PointInRect(&mousePoint, &rect);
-            isClicked = inside && event.type == SDL_MOUSEBUTTONDOWN;
+            m_isClicked = inside && event.type == SDL_MOUSEBUTTONDOWN;
 
             if (event.type == SDL_MOUSEBUTTONUP) {
-                isClicked = false;
+                m_isClicked = false;
             }
 
-            if (isClicked && onClick) {
-                onClick();
+            if (m_isClicked && m_onClick) {
+                m_onClick();
             }
         } 
         
         else if (event.type == SDL_MOUSEMOTION) {
             mousePoint = { event.motion.x - offsetX, event.motion.y - offsetY };
-            isHovered = SDL_PointInRect(&mousePoint, &rect);
+            m_isHovered = SDL_PointInRect(&mousePoint, &rect);
         } 
         
         else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_LEAVE) {
-            isHovered = false;
+            m_isHovered = false;
         }
 
         Widget::handleEvent(event, offsetX, offsetY);
     }
 
     void Button::setTexture(SDL_Texture* newTexture) {
-        texture = newTexture;
+        m_texture = newTexture;
     }
 
     void Button::setOnClick(std::function<void()> callback) {
-        onClick = callback;
+        m_onClick = callback;
     }
 }

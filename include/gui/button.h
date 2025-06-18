@@ -10,9 +10,9 @@ namespace gui {
     class Button : public Widget {
         public:
             std::string label;
-            bool isClicked = false;
-            bool isHovered = false;
-            std::function<void()> onClick;
+            bool m_isClicked = false;
+            bool m_isHovered = false;
+            std::function<void()> m_onClick;
 
             Button(int x, int y, int width, int height, const std::string& label = "", const std::string& id = "");
             void render(SDL_Renderer* renderer, int offsetX = 0, int offsetY = 0) override;
@@ -23,15 +23,15 @@ namespace gui {
             void setOnClick(std::function<void()> callback);
 
         private:
-            SDL_Color defaultColour = { 255, 200, 200, 255 };
-            SDL_Color pressedColour = { 150, 150, 150, 255 };
-            SDL_Color hoverColour = { 200, 200, 255, 255 };
-            SDL_Color textColour = { 0, 0, 0, 255 };
-            SDL_Texture* texture = nullptr;
+            SDL_Color m_defaultColour = { 255, 200, 200, 255 };
+            SDL_Color m_pressedColour = { 150, 150, 150, 255 };
+            SDL_Color m_hoverColour = { 200, 200, 255, 255 };
+            SDL_Color m_textColour = { 0, 0, 0, 255 };
+            SDL_Texture* m_texture = nullptr;
 
-            SDL_Texture* labelTexture = nullptr;
-            int labelWidth = 0;
-            int labelHeight = 0;
-            TTF_Font* font = nullptr;
+            SDL_Texture* m_labelTexture = nullptr;
+            int m_labelWidth = 0;
+            int m_labelHeight = 0;
+            TTF_Font* m_font = nullptr;
     };
 }
