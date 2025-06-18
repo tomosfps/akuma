@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#include <SDL.h>
+#endif
+
 #include "core/application.h"
 
 int main() {

@@ -63,7 +63,7 @@ make
 ### Windows
 ```cmd
 # Install vcpkg and dependencies
-vcpkg install sdl2 sdl2-image sdl2-ttf
+vcpkg install sdl2 sdl2-image[libjpeg-turbo] sdl2-ttf
 
 # Build with CMake
 mkdir build && cd build

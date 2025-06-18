@@ -37,8 +37,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}
-        SDL2::SDL2 SDL2::SDL2main SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
+        SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
     )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE SDL_MAIN_HANDLED)
 elseif(PkgConfig_FOUND)
     target_link_libraries(${PROJECT_NAME}
         ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES}
