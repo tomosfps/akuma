@@ -34,6 +34,8 @@ namespace gui {
     }
 
     void TextBox::render(SDL_Renderer* renderer, int offsetX, int offsetY) {
+        if (!isVisible()) return;
+
         SDL_Rect boxRect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
 
         SDL_SetRenderDrawColor(renderer, m_boxColour.r, m_boxColour.g, m_boxColour.b, m_boxColour.a);
@@ -71,12 +73,14 @@ namespace gui {
     }
 
     void TextBox::handleEvent(const SDL_Event& event, int offsetX, int offsetY) {
+        if (!isVisible()) return;
+
         SDL_Rect boxRect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
         SDL_Point mousePoint;
 
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
-                mousePoint = { event.button.x - offsetX, event.button.y - offsetY };
+                mousePoint = { event.button.x, event.button.y };
                 m_focused = SDL_PointInRect(&mousePoint, &boxRect);
                 break;
 

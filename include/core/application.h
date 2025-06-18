@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <memory>
 #include <gui/widget.h>
 
@@ -23,7 +24,13 @@ namespace core {
             std::vector<core::texture_ptr> m_textures;
             bool m_running = true;
 
+            // testing variable for changing text
+            int m_labelClickCount = 0;
+
             void handleEvents();
             void render();
+            
+        public:
+            SDL_Texture* loadTexture(const std::string& path);
     };
 }

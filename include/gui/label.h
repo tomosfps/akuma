@@ -12,5 +12,6 @@ namespace gui {
 
             Label(int x, int y, int width, int height, const std::string& text = "", TTF_Font* font = nullptr, SDL_Color colour = { 255, 255, 255 }, const std::string& id = "");
             void render(SDL_Renderer* renderer, int offsetX = 0, int offsetY = 0) override;
+            void setText(const std::string& text);
     };
 }

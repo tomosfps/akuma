@@ -52,6 +52,8 @@ namespace gui {
     }
 
     void Widget::handleEvent(const SDL_Event& event, int offsetX, int offsetY) {
+        if (!m_visible) return;
+
         for (const auto& child : m_children) {
             child->handleEvent(event, offsetX + m_x, offsetY + m_y);
         }

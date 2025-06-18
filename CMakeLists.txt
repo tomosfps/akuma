@@ -28,7 +28,7 @@ else()
     find_package(SDL2_ttf REQUIRED)
 endif()
 
-add_executable(${PROJECT_NAME} ${SOURCES} main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES} src/main.cpp)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

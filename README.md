@@ -54,7 +54,7 @@ git clone https://github.com/tomosfps/akuma
 cd akuma
 mkdir build && cd build
 cmake ..
-make
+cmake --build .
 
 # Run
 ./akuma

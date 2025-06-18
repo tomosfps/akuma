@@ -5,7 +5,7 @@
 #include "core/application.h"
 
 int main() {
-    core::Application app(800, 600, "akuma");
+    core::Application app(1200, 800, "akuma");
     app.run();
     return 0;
 }

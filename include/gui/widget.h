@@ -17,7 +17,7 @@ namespace gui {
             Widget(int x, int y, int width, int height, const std::string& id = "");
             virtual ~Widget();
 
-            void addChild(std::unique_ptr<Widget> child);
+            virtual void addChild(std::unique_ptr<Widget> child);
             static Widget* getChild(const std::string& id);
             static void removeById(const std::string& id);
             static bool setChildVisibility(const std::string& id, bool visible);

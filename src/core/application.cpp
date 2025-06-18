@@ -4,6 +4,8 @@
 #include "gui/button.h"
 #include "gui/label.h"
 #include "gui/textbox.h"
+#include "gui/boxlayout.h"
+#include "gui/tabs.h"
 
 namespace core {
     Application::Application(int width, int height, const std::string& title) {
@@ -38,70 +40,156 @@ namespace core {
         m_root = std::make_unique<gui::Widget>(0, 0, width, height);
 
         auto panel = std::make_unique<gui::Panel>(0, 0, width, height, "mainPanel");
-        auto secondPanel = std::make_unique<gui::Panel>(0, 0, width, height, "secondPanel");
-        
-        auto clickButton = std::make_unique<gui::Button>(10, 50, 280, 40, "Click Me", "clickButton");
-        auto textBox = std::make_unique<gui::TextBox>(10, 100, 280, 40, m_font, "inputBox");
-        auto textButton = std::make_unique<gui::Button>(10, 150, 280, 40, "Submit", "submitButton");
-        auto imageButtonJPG = std::make_unique<gui::Button>(500, 50, 180, 180, "Image Button JPG", "imageButtonJPG");
-        auto imageButtonPNG = std::make_unique<gui::Button>(500, 250, 180, 180, "Image Button PNG", "imageButtonPNG");
-
-        core::texture_ptr jpgTexture(IMG_LoadTexture(m_renderer, "assets/images/test1.jpg"), SDL_DestroyTexture);
-        core::texture_ptr pngTexture(IMG_LoadTexture(m_renderer, "assets/images/test1.png"), SDL_DestroyTexture);
-
-        imageButtonJPG->setTexture(jpgTexture.get());
-        imageButtonPNG->setTexture(pngTexture.get());
-        
-        m_textures.push_back(std::move(jpgTexture));
-        m_textures.push_back(std::move(pngTexture));
-                
-        textButton->setOnClick([textBox = textBox.get()]() {
-            SDL_Log("Submitted text: %s", textBox->getText().c_str());
+        auto tabs = std::make_unique<gui::Tabs>(0, 0, width, height, m_font, m_renderer, gui::BoxLayout::HORIZONTAL, "mainTabs");
+   
+        auto testingTab = std::make_unique<gui::Panel>(0, 0, width, height - 40, "testingTab");
+        auto testToolbar = std::make_unique<gui::BoxLayoutManager>(0, 0, width, 40, gui::BoxLayout::HORIZONTAL, "testToolbar");
+        auto testBtn1 = std::make_unique<gui::Button>(0, 0, 120, 40, "Test Button", "testBtn1");
+        testBtn1->setFont(m_font, m_renderer);
+        testBtn1->setOnClick([]() {
+            SDL_Log("Test button clicked!");
         });
-
-        clickButton->setOnClick([]() {
-            SDL_Log("Button clicked!");
+        testToolbar->addChild(std::move(testBtn1));
+        
+        auto testBtn2 = std::make_unique<gui::Button>(0, 0, 120, 40, "Debug Mode", "testBtn2");
+        testBtn2->setFont(m_font, m_renderer);
+        testBtn2->setOnClick([]() {
+            SDL_Log("Debug mode toggled!");
         });
+        testToolbar->addChild(std::move(testBtn2));
+        testingTab->addChild(std::move(testToolbar));
+        testingTab->addChild(std::make_unique<gui::Label>(20, 60, 300, 30, "GUI Component Testing", m_font, SDL_Color{ 255, 255, 255, 255 }, "testTitle"));
+        
+        auto testInput = std::make_unique<gui::TextBox>(20, 100, 250, 35, m_font, "testInput");
+        auto testSubmit = std::make_unique<gui::Button>(280, 100, 100, 35, "Test", "testSubmit");
+        testSubmit->setFont(m_font, m_renderer);
+        testSubmit->setOnClick([testInput = testInput.get()]() {
+            SDL_Log("Test input: %s", testInput->getText().c_str());
+        });
+        testingTab->addChild(std::move(testInput));
+        testingTab->addChild(std::move(testSubmit));
 
-        imageButtonJPG->setOnClick([this, imageButtonJPG = imageButtonJPG.get()]() {
+        core::texture_ptr testJPG1(IMG_LoadTexture(m_renderer, "assets/images/test1.jpg"), SDL_DestroyTexture);
+        core::texture_ptr testPNG1(IMG_LoadTexture(m_renderer, "assets/images/test1.png"), SDL_DestroyTexture);
+        
+        // Image toggle button 1
+        auto imageBtn1 = std::make_unique<gui::Button>(20, 150, 150, 100, "Toggle Image 1", "imageBtn1");
+        imageBtn1->setTexture(testJPG1.get());
+        m_textures.push_back(std::move(testJPG1));
+        
+        imageBtn1->setOnClick([this, imageBtn1 = imageBtn1.get()]() {
             SDL_Log("JPG Button clicked!");
-
             core::texture_ptr newTexture(IMG_LoadTexture(m_renderer, "assets/images/test2.jpg"), SDL_DestroyTexture);
 
             if (newTexture) {
-                imageButtonJPG->setTexture(newTexture.get());
+                imageBtn1->setTexture(newTexture.get());
                 m_textures.push_back(std::move(newTexture));
             } else {
                 SDL_Log("Failed to load new JPG texture: %s", IMG_GetError());
                 return;
             }
         });
+        testingTab->addChild(std::move(imageBtn1));
 
-        imageButtonPNG->setOnClick([this, imageButtonPNG = imageButtonPNG.get()]() {
+        auto imageBtn2 = std::make_unique<gui::Button>(180, 150, 150, 100, "Toggle Image 2", "imageBtn2");
+        imageBtn2->setTexture(testPNG1.get());
+        m_textures.push_back(std::move(testPNG1));
+        
+        imageBtn2->setOnClick([this, imageBtn2 = imageBtn2.get()]() {
             SDL_Log("PNG Button clicked!");
-
             core::texture_ptr newTexture(IMG_LoadTexture(m_renderer, "assets/images/test2.png"), SDL_DestroyTexture);
 
             if (newTexture) {
-                imageButtonPNG->setTexture(newTexture.get());
+                imageBtn2->setTexture(newTexture.get());
                 m_textures.push_back(std::move(newTexture));
             } else {
                 SDL_Log("Failed to load new JPG texture: %s", IMG_GetError());
                 return;
             }
         });
-    
-        clickButton->setFont(m_font, m_renderer);
-        textButton->setFont(m_font, m_renderer);
 
-        panel->addChild(std::make_unique<gui::Label>(10, 10, 280, 30, "Hello, World!", m_font, SDL_Color{ 255, 0, 0, 255 }, "greetingLabel"));
-        panel->addChild(std::move(clickButton));
-        panel->addChild(std::move(textBox));
-        panel->addChild(std::move(textButton));
-        panel->addChild(std::move(imageButtonJPG));
-        panel->addChild(std::move(imageButtonPNG));
+        testingTab->addChild(std::move(imageBtn2));
+        testingTab->addChild(std::make_unique<gui::Label>(20, 270, 400, 30, "Click the button to change this text!", m_font, SDL_Color{ 255, 255, 0, 255 }, "dynamicLabel"));
 
+        auto changeLabelBtn = std::make_unique<gui::Button>(20, 310, 200, 40, "Change Label Text", "changeLabelBtn");
+        changeLabelBtn->setFont(m_font, m_renderer);
+        
+        changeLabelBtn->setOnClick([this]() {
+            auto* label = static_cast<gui::Label*>(gui::Widget::getChild("dynamicLabel"));
+            if (label) {
+                static std::vector<std::string> labelTexts = {
+                    "Text changed successfully!",
+                    "This is the second message!",
+                    "Testing dynamic label updates...",
+                    "Labels work perfectly!",
+                    "Back to the beginning!"
+                };
+                
+                label->setText(labelTexts[m_labelClickCount % labelTexts.size()]);
+                SDL_Log("Label text changed to: %s", labelTexts[m_labelClickCount % labelTexts.size()].c_str());
+                m_labelClickCount++;
+            }
+        });
+        testingTab->addChild(std::move(changeLabelBtn));
+
+        auto loginTab = std::make_unique<gui::Panel>(0, 0, width, height - 40, "loginTab");
+        int centerX = width / 2 - 150;
+        int startY = height / 2 - 120;
+        
+        loginTab->addChild(std::make_unique<gui::Label>(centerX + 120, startY - 40, 400, 40, "Akuma", m_font, SDL_Color{ 255, 0, 0, 255 }, "loginTitle"));
+        loginTab->addChild(std::make_unique<gui::Label>(centerX, startY, 300, 25, "Username or Email:", m_font, SDL_Color{ 200, 255, 200, 255 }, "usernameLabel"));
+
+        auto usernameInput = std::make_unique<gui::TextBox>(centerX, startY + 30, 300, 40, m_font, "usernameInput");
+        loginTab->addChild(std::make_unique<gui::Label>(centerX, startY + 80, 300, 25, "Password:", m_font, SDL_Color{ 200, 255, 200, 255 }, "passwordLabel"));
+        auto passwordInput = std::make_unique<gui::TextBox>(centerX, startY + 110, 300, 40, m_font, "passwordInput");
+
+        auto loginButton = std::make_unique<gui::Button>(centerX, startY + 170, 300, 45, "Login", "loginButton");
+        loginButton->setFont(m_font, m_renderer);
+        loginButton->setOnClick([usernameInput = usernameInput.get(), passwordInput = passwordInput.get()]() {
+            SDL_Log("Login attempt - Username: %s, Password: %s", 
+                    usernameInput->getText().c_str(), 
+                    passwordInput->getText().c_str());
+        });
+        
+        auto registerButton = std::make_unique<gui::Button>(centerX + 50, startY + 230, 200, 60, "Create Account", "registerButton");
+        registerButton->setFont(m_font, m_renderer);
+        registerButton->setOnClick([]() {
+            SDL_Log("Redirect to registration page");
+        });
+        
+        loginTab->addChild(std::move(usernameInput));
+        loginTab->addChild(std::move(passwordInput));
+        loginTab->addChild(std::move(loginButton));
+        loginTab->addChild(std::move(registerButton));
+
+        tabs->addTab("Testing", std::move(testingTab));
+        tabs->addTab("Login", std::move(loginTab));
+        
+        panel->addChild(std::move(tabs));
         m_root->addChild(std::move(panel));
+    }
+
+    SDL_Texture* Application::loadTexture(const std::string& path) {
+        SDL_Surface* surface = IMG_Load(path.c_str());
+        if (!surface) {
+            SDL_Log("Failed to load image %s: %s", path.c_str(), IMG_GetError());
+            return nullptr;
+        }
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+        SDL_FreeSurface(surface);
+
+        if (!texture) {
+            SDL_Log("Failed to create texture from %s: %s", path.c_str(), SDL_GetError());
+            return nullptr;
+        }
+
+        // Store texture in the managed vector
+        m_textures.emplace_back(texture, [](SDL_Texture* t) { 
+            if (t) SDL_DestroyTexture(t); 
+        });
+
+        return texture;
     }
 
     Application::~Application() {

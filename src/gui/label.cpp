@@ -5,7 +5,7 @@ namespace gui {
         : Widget(x, y, width, height, id), m_text(text), m_font(font), m_colour(colour) {}
 
     void Label::render(SDL_Renderer* renderer, int offsetX, int offsetY) {
-        if (m_font == nullptr || m_text.empty()) return;
+        if (m_font == nullptr || m_text.empty() || !isVisible()) return;
 
         SDL_Surface* surface = TTF_RenderText_Blended(m_font, m_text.c_str(), m_colour);
         if (surface == nullptr) return;
@@ -23,5 +23,9 @@ namespace gui {
         SDL_FreeSurface(surface);
 
         Widget::render(renderer, offsetX, offsetY);
+    }
+
+    void Label::setText(const std::string& text) {
+        m_text = text;
     }
 }

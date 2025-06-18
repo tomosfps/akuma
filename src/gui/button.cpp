@@ -27,6 +27,8 @@ namespace gui {
     }
 
     void Button::render(SDL_Renderer* renderer, int offsetX, int offsetY) {
+        if (!isVisible()) return;
+
         SDL_Rect rect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
     
         if (m_texture) {
@@ -50,11 +52,13 @@ namespace gui {
     }
 
     void Button::handleEvent(const SDL_Event& event, int offsetX, int offsetY) {
+        if (!isVisible()) return;
+
         SDL_Rect rect = { offsetX + m_x, offsetY + m_y, m_width, m_height };
         SDL_Point mousePoint;
 
         if ((event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) && event.button.button == SDL_BUTTON_LEFT) {
-            mousePoint = { event.button.x - offsetX, event.button.y - offsetY };
+            mousePoint = { event.button.x, event.button.y };
             bool inside = SDL_PointInRect(&mousePoint, &rect);
             m_isClicked = inside && event.type == SDL_MOUSEBUTTONDOWN;
 
@@ -62,16 +66,16 @@ namespace gui {
                 m_isClicked = false;
             }
 
-            if (m_isClicked && m_onClick) {
+            if (inside && event.type == SDL_MOUSEBUTTONUP && m_onClick) {
                 m_onClick();
             }
         } 
         
         else if (event.type == SDL_MOUSEMOTION) {
-            mousePoint = { event.motion.x - offsetX, event.motion.y - offsetY };
+            mousePoint = { event.motion.x, event.motion.y };
             m_isHovered = SDL_PointInRect(&mousePoint, &rect);
         } 
-        
+
         else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_LEAVE) {
             m_isHovered = false;
         }
