@@ -10,10 +10,10 @@ A lightweight, fast Discord desktop client written in C++ using SDL2. Akuma prov
 
 **ALPHA** - Core GUI framework only. Discord functionality not yet implemented.
 
-- [-] Basic GUI framework
-- [] Discord integration
-- [] Authentication
-- [] Messaging
+- [x] Basic GUI framework
+- [ ] Discord integration
+- [ ] Authentication
+- [ ] Messaging
 
 **Note**: Things could change, or this project could never finish. Do not make a total switch, nor think about it at this current time.
 
